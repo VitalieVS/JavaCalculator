@@ -5,6 +5,8 @@
  */
 package javacalculator;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author User
@@ -58,6 +60,11 @@ public class Calculator extends javax.swing.JFrame {
         setBackground(new java.awt.Color(204, 204, 204));
         setFont(new java.awt.Font("Agency FB", 1, 10)); // NOI18N
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         button_3.setBackground(new java.awt.Color(0, 0, 0));
         button_3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -155,6 +162,7 @@ public class Calculator extends javax.swing.JFrame {
         button_plus_minus.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         button_plus_minus.setForeground(new java.awt.Color(255, 255, 255));
         button_plus_minus.setText("-/+");
+        button_plus_minus.setEnabled(false);
         button_plus_minus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_plus_minusActionPerformed(evt);
@@ -236,10 +244,23 @@ public class Calculator extends javax.swing.JFrame {
 
         result_field.setBackground(new java.awt.Color(204, 204, 204));
         result_field.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        result_field.setText("0");
         result_field.setToolTipText("");
         result_field.setBorder(null);
         result_field.setCaretColor(new java.awt.Color(204, 204, 204));
         result_field.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        result_field.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                result_fieldInputMethodTextChanged(evt);
+            }
+        });
+        result_field.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                result_fieldActionPerformed(evt);
+            }
+        });
         result_field.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 result_fieldKeyTyped(evt);
@@ -345,14 +366,32 @@ public class Calculator extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    void writeNumber(String number) {      
-         if (!this.flag) {                        
-            this.firstNumber += number;
-            result_field.setText(result_field.getText() + number);
+    void writeNumber(String number) {  
+        if (!"0".equals(result_field.getText())){
+            if (!this.flag) {
+                if ("0".equals(this.firstNumber) & "0".equals(number)) {
+                    result_field.setText(number);
+                } else {              
+                  this.firstNumber += number;
+                  result_field.setText(result_field.getText() + number);
+                }
+            } else {
+                 if ("0".equals(this.secondNumber) & "0".equals(number)) {
+                     result_field.setText(this.firstNumber + this.operator + number);
+                 } else {
+                    this.secondNumber += number;
+                    result_field.setText(result_field.getText() + number);  
+                 }    
+            }                   
         } else {
-           this.secondNumber += number;
-           result_field.setText(result_field.getText() + number);         
-         }          
+            result_field.setText("");       
+            writeNumber(number);
+        }
+    }
+    
+    public static void infoBox(String infoMessage, String titleBar)
+    {
+        JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
     }
     
     void writeDecimal() {    
@@ -368,8 +407,7 @@ public class Calculator extends javax.swing.JFrame {
             }
         }
     }
-    
-    
+      
     void clearInput() {  
         this.operator = ' ';
         this.firstNumber = "";
@@ -414,14 +452,14 @@ public class Calculator extends javax.swing.JFrame {
                 break;
             case '/':
                 if ("0".equals(this.secondNumber)) {
-                    this.clearInput();
+                    result_field.setText("Error");
+                    //this.clearInput();
                 } else {
                     result_field.setText(String.valueOf(Float.parseFloat(firstNumber) / Float.parseFloat(secondNumber)) );
                   this.resetNumber();
                 }
                 break;
         }
-
         this.operator = ' ';
     }
     
@@ -438,7 +476,7 @@ public class Calculator extends javax.swing.JFrame {
     }//GEN-LAST:event_button_1ActionPerformed
 
     private void button_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_2ActionPerformed
-         writeNumber("2");      
+        writeNumber("2");      
     }//GEN-LAST:event_button_2ActionPerformed
 
     private void button_4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_4ActionPerformed
@@ -446,31 +484,31 @@ public class Calculator extends javax.swing.JFrame {
     }//GEN-LAST:event_button_4ActionPerformed
 
     private void button_5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_5ActionPerformed
-         writeNumber("5");     
+        writeNumber("5");     
     }//GEN-LAST:event_button_5ActionPerformed
 
     private void button_6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_6ActionPerformed
-          writeNumber("6");
+        writeNumber("6");
     }//GEN-LAST:event_button_6ActionPerformed
 
     private void button_8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_8ActionPerformed
-          writeNumber("8");
+        writeNumber("8");
     }//GEN-LAST:event_button_8ActionPerformed
 
     private void button_7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_7ActionPerformed
-          writeNumber("7");
+        writeNumber("7");
     }//GEN-LAST:event_button_7ActionPerformed
 
     private void button_9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_9ActionPerformed
-          writeNumber("9");
+        writeNumber("9");
     }//GEN-LAST:event_button_9ActionPerformed
 
     private void button_plus_minusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_plus_minusActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_button_plus_minusActionPerformed
 
     private void button_0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_0ActionPerformed
-         writeNumber("0");
+        writeNumber("0");
     }//GEN-LAST:event_button_0ActionPerformed
 
     private void dot_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dot_buttonActionPerformed
@@ -499,14 +537,26 @@ public class Calculator extends javax.swing.JFrame {
 
     private void result_fieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_result_fieldKeyTyped
        char enter = evt.getKeyChar();
-               if (!(Character.isDigit(enter))) {
-                   evt.consume();
-               }                    
+        if (!(Character.isDigit(enter))) {
+            evt.consume();
+        }                   
     }//GEN-LAST:event_result_fieldKeyTyped
 
     private void button_10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_10ActionPerformed
         clearInput();   
     }//GEN-LAST:event_button_10ActionPerformed
+
+    private void result_fieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_result_fieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_result_fieldActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+       result_field.setText(firstNumber);
+    }//GEN-LAST:event_formWindowOpened
+
+    private void result_fieldInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_result_fieldInputMethodTextChanged
+      
+    }//GEN-LAST:event_result_fieldInputMethodTextChanged
 
     /**
      * @param args the command line arguments
